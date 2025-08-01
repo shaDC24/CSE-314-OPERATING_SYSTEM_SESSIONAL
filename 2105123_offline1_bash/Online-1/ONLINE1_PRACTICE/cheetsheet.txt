@@ -1,0 +1,1267 @@
+#!/bin/bash
+==========================the cheet sheet content===========================================================
+!/bin/bash
+
+if [[ -z "$string" ]]; then
+  echo "String is empty"
+elif [[ -n "$string" ]]; then
+  echo "String is not empty"
+fi
+
+==============================================
+set -euo pipefail
+IFS=$'\n\t'
+=================================================
+echo {A,B}.js
+
+{A,B} 	Same as A B
+{A,B}.js 	Same as A.js B.js
+{1..5} 	Same as 1 2 3 4 5
+{{1..3},{7..9}} 	Same as 1 2 3 7 8 9
+================================================
+wildcard="*.txt"
+options="iv"
+cp -$options $wildcard /tmp
+=================================================
+name="John"
+echo "${name}"
+echo "${name/J/j}"    #=> "john" (substitution)
+echo "${name:0:2}"    #=> "Jo" (slicing)
+echo "${name::2}"     #=> "Jo" (slicing)
+echo "${name::-1}"    #=> "Joh" (slicing)
+echo "${name:(-1)}"   #=> "n" (slicing from right)
+echo "${name:(-2):1}" #=> "h" (slicing from right)
+echo "${name:(-4):4}" #=> "John"
+echo "${food:-Cake}"  #=> $food or "Cake"
+===============================================
+
+Substrings
+str="dwehcbehd"
+echo ${str:0:2} 	#Substring (position, length)
+echo ${str:(-3):3} 	#Substring from the right
+
+===================================================
+str="/path/to/foo.cpp"
+echo "${str%.cpp}"    # /path/to/foo
+echo "${str%.cpp}.o"  # /path/to/foo.o
+echo "${str%/*}"      # /path/to
+
+echo "${str##*.}"     # cpp (extension)
+echo "${str##*/}"     # foo.cpp (basepath)
+
+echo "${str#*/}"      # path/to/foo.cpp
+echo "${str##*/}"     # foo.cpp
+
+echo "${str/foo/bar}" # /path/to/bar.cpp
+str="Hello world"
+echo "${str:6:5}"    # "world"
+echo "${str: -5:5}"  # "world"
+src="/path/to/foo.cpp"
+base=${src##*/}      #=> "foo.cpp" (basepath)
+dir=${src%$base}     #=> "/path/to/" (dirpath)
+================================================
+name=joe
+pointer=name
+echo ${!pointer}
+===================================================
+Substitution
+
+${foo%suffix} 	#Remove suffix
+${foo#prefix} 	#Remove prefix
+${foo%%suffix} 	#Remove long suffix
+${foo/%suffix} 	#Remove long suffix
+${foo##prefix} 	#Remove long prefix
+${foo/#prefix} 	#Remove long prefix
+${foo/from/to} 	#Replace first match
+${foo//from/to} 	#Replace all
+${foo/%from/to} 	#Replace suffix
+${foo/#from/to} 	#Replace prefix
+${#foo} 	#Length of $foo
+
+foo="hello_world.txt"
+bar="hello.world.txt"
+file="report.final.draft.docx"
+path="/home/shekhar/code/file.java"
+greeting="hello_world"
+filename="data.txt"
+animal="cat_dog_cat"
+
+echo "Original foo: $foo"
+echo "1. Remove shortest suffix (.txt): ${foo%.txt}"      
+echo "2. Remove shortest prefix (hello_): ${foo#hello_}"  
+echo -e "\nOriginal bar: $bar"
+echo "3. Remove longest suffix (.*): ${bar%%.*}"          
+echo "5. Remove longest prefix (*.): ${bar##*.}"          
+echo -e "\nOriginal file: $file"
+echo "4. Remove suffix matching pattern: ${file/%.*}"     
+echo -e "\nOriginal path: $path"
+echo "6. Remove prefix matching pattern: ${path/#\/home}" 
+echo -e "\nOriginal animal: $animal"
+echo "7. Replace first match (cat -> mouse): ${animal/cat/mouse}"
+echo "8. Replace all matches (cat -> mouse): ${animal//cat/mouse}"
+echo -e "\nOriginal filename: $filename"
+echo "9. Replace suffix (txt -> csv): ${filename/%txt/csv}" 
+echo -e "\nOriginal greeting: $greeting"
+echo "10. Replace prefix (hello -> hi): ${greeting/#hello/hi}"
+echo -e "\n11. Length of foo: ${#foo}"
+combo="my.resume.final.pdf"
+base="${combo%%.*}"
+ext="${combo##*.}"
+echo -e "\nBonus:"
+echo "Base: $base"
+echo "Extension: $ext"
+================================================
+
+str="HELLO WORLD!"
+echo "${str,}"   #=> "hELLO WORLD!" (lowercase 1st letter)
+echo "${str,,}"  #=> "hello world!" (all lowercase)
+
+str="hello world!"
+echo "${str^}"   #=> "Hello world!" (uppercase 1st letter)
+echo "${str^^}"  #=> "HELLO WORLD!" (all uppercase)
+
+=======================================================
+
+unset foo
+echo "Original foo is unset."
+echo
+# 1️⃣ ${foo:-val} → Value if unset or null (but doesn't set it)
+echo "1. Value of foo (or default if unset): ${foo:-default_value}"
+echo "After this, foo is still unset: $foo"
+echo
+
+# 2️⃣ ${foo:=val} → Assign value if unset or null (sets foo)
+echo "2. Assign default to foo if unset: ${foo:=default_assigned}"
+echo "Now foo is set to: $foo"
+echo
+
+# 3️⃣ ${foo:+val} → Return this value *if foo is set*
+echo "3. If foo is set, use this value: ${foo:+custom_value}"
+echo "Current foo: $foo"
+echo
+
+# 4️⃣ ${bar:?Error message} → Show error and exit if bar is unset/null
+# Uncomment below to see it in action:
+# echo "4. If bar is unset, show error: ${bar:?bar is not set! Exiting...}"
+
+# To demonstrate with bar set:
+bar="exists"
+echo "4. With bar set: ${bar:?bar is not set!}"
+
+prefix_a=one
+prefix_b=two
+echo ${!prefix_*}  # all variables names starting with `prefix_`
+                    # prefix_a prefix_b
+
+LOOPS
+
+
+
+for i in /etc/rc.*; do
+  echo "$i"
+done
+
+
+for ((i = 0 ; i < 100 ; i++)); do
+  echo "$i"
+done
+
+while read -r line; do
+  echo "$line"
+done <file.txt
+
+
+
+while true; do
+  ···
+done
+
+for i in {1..5}; do
+    echo "Welcome $i"
+done
+
+for i in {5..50..5}; do
+    echo "Welcome $i"
+done
+
+=======================================================
+$# 	Number of arguments
+$* 	All positional arguments (as a single word)
+$@ 	All positional arguments (as separate strings)
+$1 	First argument
+$_ 	Last argument of the previous command
+======================================================
+[[ -z STRING ]] 	Empty string
+[[ -n STRING ]] 	Not empty string
+[[ STRING == STRING ]] 	Equal
+[[ STRING != STRING ]] 	Not Equal
+[[ NUM -eq NUM ]] 	Equal
+[[ NUM -ne NUM ]] 	Not equal
+[[ NUM -lt NUM ]] 	Less than
+[[ NUM -le NUM ]] 	Less than or equal
+[[ NUM -gt NUM ]] 	Greater than
+[[ NUM -ge NUM ]] 	Greater than or equal
+[[ STRING =~ STRING ]] 	Regexp
+(( NUM < NUM )) 	Numeric conditions
+[[ -o noclobber ]] 	If OPTIONNAME is enabled
+[[ ! EXPR ]] 	Not
+[[ X && Y ]] 	And
+[[ X || Y ]] 	Or
+====================================================
+
+[[ -e FILE ]] 	Exists
+[[ -r FILE ]] 	Readable
+[[ -h FILE ]] 	Symlink
+[[ -d FILE ]] 	Directory
+[[ -w FILE ]] 	Writable
+[[ -s FILE ]] 	Size is > 0 bytes
+[[ -f FILE ]] 	File
+[[ -x FILE ]] 	Executable
+[[ FILE1 -nt FILE2 ]] 	1 is more recent than 2
+[[ FILE1 -ot FILE2 ]] 	2 is more recent than 1
+[[ FILE1 -ef FILE2 ]] 	Same files
+
+==================================================
+
+# String
+if [[ -z "$string" ]]; then
+  echo "String is empty"
+elif [[ -n "$string" ]]; then
+  echo "String is not empty"
+else
+  echo "This never happens"
+fi
+=================================================
+# Combinations
+if [[ X && Y ]]; then
+  ...
+fi
+
+# Equal
+if [[ "$A" == "$B" ]]
+
+# Regex
+if [[ "A" =~ . ]]
+
+if (( $a < $b )); then
+   echo "$a is smaller than $b"
+fi
+
+if [[ -e "file.txt" ]]; then
+  echo "file exists"
+fi
+=====================================================================================
+text="Asdfghjkl"
+if [[ $text =~ . ]]; then
+    echo "Match! '$text' has at least one character."
+else
+    echo "No match."
+fi
+
+
+word="hello123"
+
+
+if [[ $word =~ ^[a-zA-Z]+$ ]]; then
+    echo "Only letters"
+else
+    echo "Not only letters"
+fi
+if [[ $word =~ ^h.*[0-9]$ ]]; then
+    echo "Starts with 'h' and ends with a digit"
+fi
+word="abc123"
+if [[ $word =~ [0-9] ]]; then
+    echo "The word contains at least one digit."
+else
+    echo "The word has no digits."
+fi
+===========================================================================================================================
+Defining arrays
+
+Fruits=('Apple' 'Banana' 'Orange')
+Veggies=('A' 'B' 'C')
+Fruits[0]="Apple"
+Fruits[1]="Banana"
+Fruits[2]="Orange"
+
+echo "${Fruits[0]}"           # Element #0
+echo "${Fruits[-1]}"          # Last element
+echo "${Fruits[@]}"           # All elements, space-separated
+echo "${#Fruits[@]}"          # Number of elements
+echo "${#Fruits}"             # String length of the 1st element
+echo "${#Fruits[3]}"          # String length of the Nth element
+echo "${Fruits[@]:3:2}"       # Range (from position 3, length 2)
+echo "${Fruits[@]:1:2}"  
+echo "${!Fruits[@]}"          # Keys of all elements, space-separated
+
+# Iteration
+
+for i in "${Fruits[@]}"; do
+  echo "$i"
+done
+
+Fruits=("${Fruits[@]}" "Watermelon")    # Push
+Fruits+=('Watermelon')                  # Also Push
+Fruits=( "${Fruits[@]/Ap*/}" )          # Remove by regex match
+unset Fruits[2]                         # Remove one item
+Fruits=("${Fruits[@]}")                 # Duplicate
+Fruits=("${Fruits[@]}" "${Veggies[@]}") # Concatenate
+# lines=(`cat "logfile"`)                 # Read from file
+# Iteration
+for i in "${Fruits[@]}"; do
+  echo "$i"
+done
+========================================================================================================================================
+Dictionaries
+
+declare -A sounds
+sounds[dog]="bark"
+sounds[cow]="moo"
+sounds[bird]="tweet"
+sounds[wolf]="howl"
+
+
+echo "${sounds[dog]}" # Dog's sound
+echo "${sounds[@]}"   # All values
+echo "${!sounds[@]}"  # All keys
+echo "${#sounds[@]}"  # Number of elements
+unset sounds[dog]     # Delete dog
+
+for val in "${sounds[@]}"; do
+  echo "$val"
+done
+for key in "${!sounds[@]}"; do
+  echo "$key"
+done
+=============================================================
+
+declare -i count  # Declare as type integer
+count+=1          # Increment
+echo $count
+count+=1          # Increment
+echo $count
+
+echo $(($RANDOM%200))
+echo $(($RANDOM%200))
+=======================================================================
+
+-c 	Operations apply to characters not in the given set
+-d 	Delete characters
+-s 	Replaces repeated characters with single occurrence
+-t 	Truncates
+[:upper:] 	All upper case letters
+[:lower:] 	All lower case letters
+[:digit:] 	All digits
+[:space:] 	All whitespace
+[:alpha:] 	All letters
+[:alnum:] 	All letters and digits
+Example
+
+echo "Welcome To Devhints" | tr '[:lower:]' '[:upper:]'
+WELCOME TO DEVHINTS
+
+echo  "abc123" | tr -d [:digit:]
+# Output: abc   → digits are deleted
+
+echo  "abc123" | tr -cd [:digit:]
+# Output: 123   → deletes everything **except** digits
+echo
+echo "heeeellooo     world!!" | tr -s " "
+# Output: heeeellooo world!!
+echo "aaabbbcccaaa" | tr -s "a" | tr -s "b" | tr -s "c"
+# Output: abbbccca
+echo "abcdef" | tr -t abc 123
+# Output: 123def   → replaces a→1, b→2, c→3, rest unchanged
+echo "Hello World" | tr [:upper:] [:lower:]
+# Output: hello world
+echo "bash script" | tr [:lower:] [:upper:]
+# Output: BASH SCRIPT
+echo "a b	c  d" | tr -d [:space:]
+# Output: abcd
+echo
+echo "Helloooo!!!    1234" | tr -cd [:alnum:]
+# Output: Helloooo1234
+echo
+echo "hello123!!" | tr -cd [:alpha:]
+# Output: hello   → keeps only alphabetic letters
+echo
+echo "hello123!!" | tr -cd [:alnum:]
+# Output: hello123 → keeps only letters and numbers
+echo
+===========================================================
+python hello.py > output.txt            # stdout to (file)
+python hello.py >> output.txt           # stdout to (file), append
+python hello.py 2> error.log            # stderr to (file)
+python hello.py 2>&1                    # stderr to stdout
+python hello.py 2>/dev/null             # stderr to (null)
+python hello.py >output.txt 2>&1        # stdout and stderr to (file), equivalent to &>
+python hello.py &>/dev/null             # stdout and stderr to (null)
+echo "$0: warning: too many users" >&2  # print diagnostic message to stderr
+
+python hello.py < foo.txt      # feed foo.txt to stdin for python
+diff <(ls -r) <(ls)            # Compare two stdout without files
+==========================================================
+
+
+command -V cd
+=> "cd is a function/alias/whatever"
+
+
+
+while [[ "$1" =~ ^- && ! "$1" == "--" ]]; 
+do 
+case $1 in
+  -V | --version )
+    echo "$version"
+    exit
+    ;;
+  -s | --string )
+    shift; string=$1
+    ;;
+  -f | --flag )
+    flag=1
+    ;;
+esac; shift; done
+if [[ "$1" == '--' ]]; then shift; fi
+===========================================
+echo -n "Proceed? [y/n]: "
+read -r ans
+echo "$ans"
+
+=================================================
+
+printf "Hello %s, I'm %s" Sven Olga
+#=> "Hello Sven, I'm Olga
+printf "\n"
+printf "1 + 1 = %d" 2
+#=> "1 + 1 = 2"
+printf "\n"
+printf "This is how you print a float: %f" 2
+#=> "This is how you print a float: 2.000000"
+printf "\n"
+printf '%s\n' '#!/bin/bash' 'echo hello' >file
+# format string is applied to each group of arguments
+printf '%i+%i=%i\n' 1 2 3  4 5 9
+
+$? 	Exit status of last task
+$! 	PID of last background task
+$$ 	PID of shell
+$0 	Filename of the shell script
+$_ 	Last argument of the previous command
+${PIPESTATUS[n]} 	return value of piped commands (array)
+
+
+====================================================
+
+echo foo
+ls
+if grep -q 'foo' ~/.bash_history; then
+  echo "You appear to have typed 'foo' in the past"
+fi
+
+
+
+....................................................................................
+echo -n "Enter your name "
+read name
+echo "$name"
+
+echo -n "Enter another name "
+read name2
+echo "$name2"
+
+if [[ "$name" = "$name2" ]];
+then
+echo "name are equal"
+elif [[ "$name" != "$name2"  ]];
+then echo "name are not equal"
+fi
+....................................................................................
+....................................................................................
+read n
+if [[ $n -gt 100 ]];
+then
+echo "$n is greater than 100"
+elif [[ $n -gt 50 ]];
+then echo "$n is greater than 50"
+else
+echo "$n is smaller"
+fi
+....................................................................................
+....................................................................................
+string1="i love cse buet"
+
+if [[ -n "$string1" ]];
+then
+echo "$string1 is not null"
+elif [[ -z "$string1" ]];
+then
+echo "$string1 is null"
+fi
+....................................................................................
+expression1=$(expr 10 + 4)
+echo $expression1
+expression2=$(expr 10 + 1)
+echo $expression2
+
+if [[ $expression1 -gt $expression2 ]];
+then
+echo "Greater"
+elif [[ $expression1 -ge $expression2 ]];
+then
+echo "Greater equal"
+elif [[ $expression1 -lt $expression2 ]];
+then
+echo "Less than"
+elif [[ $expression1 -le $expression2 ]];
+then
+echo "Less equal"
+fi
+
+if [[ $expression1 != $expression2 ]];
+then
+echo "not equal"
+fi
+....................................................................................
+....................................................................................
+echo "Have you eaten?"
+read ans
+case $ans in
+y*|Y*)echo "Good"
+;;
+n*|N*)echo "Please have these cookies"
+;;
+*)
+echo "Can not understand"
+;;
+esac
+....................................................................................
+....................................................................................
+echo $1
+echo $*
+echo $#
+....................................................................................
+....................................................................................
+total=0
+for((i=0;i<=5;i++));
+do
+total=$(($total + $i))
+done
+
+echo $total
+....................................................................................
+....................................................................................
+total=0
+for i in $*;
+do
+total=$(($total + $i))
+echo $total
+done
+....................................................................................
+....................................................................................
+read password
+count=1
+while [[ $password != "hack" ]];
+do
+echo "$password is wrong"
+read password
+count=$(($count + 1))
+done
+
+echo "$password is matched in the $count th attempt"
+....................................................................................
+....................................................................................
+take_sum()
+{
+    sum=0
+    for i in $*;
+    do
+    # echo "$i"
+    sum=$(($sum + $i))
+    done
+    echo $sum
+}
+
+result=$(take_sum 1 2 3 4)
+echo $result
+....................................................................................
+....................................................................................
+visit()
+{
+    if [[ -f "$1" ]];
+    then
+    echo "we have visited "$1""
+    elif [[ -d "$1" ]];
+    then
+    for i in "$1"/*;
+    do
+    visit "$i"
+    done
+    fi
+}
+visit "practice online 1"
+....................................................................................
+
+mkdir -pv blueberry raspberry
+mkdir -pv shatabdi/buet/cse/cse301
+mkdir -p krashna/cse/shatabdi/buet/cse314
+
+echo hello>a.txt
+cat a.txt
+echo world>a.txt
+cat a.txt
+
+echo hwordfs>>a.txt
+cat a.txt
+echo wseqdwew>>a.txt
+cat a.txt
+
+cp -r krashna another
+cp -r krashna raspberry
+
+rm -ri raspberry
+rm a.txt 2>>err.txt
+{cat < 2.txt;} 2>>err.txt
+cat err.txt
+sort a.txt
+uniq -c a.txt
+echo 1,2,3,4,5,6,7,8,9,10>>b.txt
+
+cat b.txt
+sort -n b.txt
+sort -nr b.txt
+uniq -c b.txt
+....................................................................................
+....................................................................................
+
+tr -c '[:alnum:]' '[\n*]' < a.txt | head -n 5
+tr -c '[:alnum:]' '[\n*]' < a.txt | tr '[:upper:]' '[:lower:]'| sort  | uniq -c  | sort -nr
+tr -c '[:alnum:]' '[\n*]' < a.txt | tr '[:upper:]' '[:lower:]'| sort  | uniq -c  | sort -nr | head -n 15
+....................................................................................
+....................................................................................
+tail -F new.txt
+....................................................................................
+linecount=$(cat a.txt | wc -l)
+echo $linecount
+....................................................................................
+wordcount=$(cat a.txt | wc -w)
+echo $wordcount
+....................................................................................
+cat b.txt | cut -d: -f1
+....................................................................................
+grep -i "^one" a.txt
+grep -iw "^one" a.txt
+grep -iv "^one" a.txt
+grep  -n -C 3 "^ahh" a.txt
+....................................................................................
+ln -s ~/pwd ~/online1shortcut
+....................................................................................
+ps aux
+ps aux |grep root
+
+sudo apt update
+sudo apt autoremove
+....................................................................................
+myArray=("cat" "dog" "mouse" "frog")
+myArray[10]="far"
+
+for str in ${myArray[@]};
+do
+echo $str
+done
+
+for i in ${!myArray[@]};
+do
+echo "element $i is ${myArray[$i]}"
+done
+....................................................................................
+....................................................................................
+
+mkdir -p image
+for filename in $(ls source)
+do
+    id="${filename::-4}"
+    mkdir -p "image/$id"
+    #cp source destination
+    cp "source/$filename" "image/$id"
+done
+....................................................................................
+....................................................................................
+
+....................................................................................
+....................................................................................
+practice problem 1
+
+for filename in "movie_data/"*.txt
+do
+fileBaseName="${filename##*/}"  
+echo $filename
+found_blank=false
+count=0
+directorname=""
+# grep -n '^$' "$filename"
+while IFS= read -r line ;
+do
+if [[ -z "$line" ]];then
+((count++))
+echo $count
+
+elif [[ $count -eq 2 ]];
+then
+directorname="$line"
+break
+fi
+done <"$filename"
+echo $directorname
+if [[ ! -d "movie_data/$directorname" ]];
+then
+mkdir -p "movie_data/$directorname" 
+fi
+if [[ ! -e "movie_data/$directorname/$fileBaseName" ]];
+then
+cp "$filename" "movie_data/$directorname/$fileBaseName"
+fi
+done
+for filename in "movie_data/"*.txt
+do
+rm -rf "$filename"
+done
+
+....................................................................................
+....................................................................................
+....................................................................................
+
+practice problem 2
+for folder in *; do
+    echo "$folder"
+    
+    find "$folder" -type f -name "*.txt" | while IFS= read -r i; do
+        echo "Reading file: $i"
+        filebasename=${i##*/}
+        echo "Base file name : $filebasename"
+        if [[ ! -f "$i" ]]; then
+            echo "File not found: $i"
+            continue
+        fi
+
+        cnt=0
+        country=""
+        role=""
+        change=false
+
+        while IFS= read -r line; do 
+            cnt=$((cnt + 1))
+
+
+            if [[ $cnt -eq 2 ]]; then
+                country="$line"
+            fi
+            if [[ $cnt -eq 4 ]]; then
+                role="$line"
+            fi
+
+        done < "$i"
+
+        echo "Total lines read: $cnt"
+        echo "Country: $country"
+        echo "Role: $role"
+        if [[ ! -d "$country/$role" ]];
+        then
+        mkdir -p "$country/$role"
+        change=true
+        
+        fi
+        if [[ ! -e "$country/$role/$filebasename" ]];
+        then
+        cp  "$i" "$country/$role/$filebasename"
+        fi
+        if [[ $change == true ]];
+        then
+        rm -rf "$i"
+        fi
+    done
+    
+done
+
+for remfolder in *;
+do
+if [[ -z "$(find "$remfolder" -type f)" ]]; then
+    echo "$remfolder is completely empty"
+    rm -rf "$remfolder"
+else
+    echo "$remfolder has files"
+fi
+
+done
+
+....................................................................................
+....................................................................................
+
+
+
+practice problem 3
+if [[ $# -lt 1 ]]
+then
+kill $$ INT
+fi
+dest_dir=2105123
+tempFile=filetoremove.txt
+min_page_number=$1
+if [[ ! -d "$dest_dir" ]];
+then
+mkdir "$dest_dir"
+fi
+touch "$tempFile"
+visit()
+{
+    if [[ -f "$1" && "$1" == *.pdf ]];
+    then
+    nextToDo "$1"
+    elif [[ -d "$1" ]];
+    then
+     for i in "$1"/*;
+     do
+        visit "$i"
+     done
+
+    fi
+}
+nextToDo()
+{
+    file=$1
+    # echo "$1 has come to next to do"
+    pages=$(pdfinfo "$file" | grep ^Pages: | awk '{print $2}')
+    if [[ $pages -gt $min_page_number ]];
+    then
+        size=$(stat -c%s "$file")
+        size_hr=$(du -h "$file" | cut -f1)
+        echo "$size:$file" >> $tempFile
+
+    fi
+}
+for k in *;
+do
+visit "$k"
+done
+
+cnt=1
+find "$new_dir" -type f -printf "%s %p\n" | sort -n | while read -r size file; do
+    # Extract extension if needed, or just name them as .pdf
+    mv "$file" "$new_dir/$cnt.pdf"
+    cnt=$((cnt + 1))
+done
+ls -la "$new_dir"
+
+
+sort -n $tempFile  > sorted.txt
+rm -rf $tempFile
+cnt=1
+while IFS= read -r line;
+do
+echo $line
+filesize=${line%%:*}
+echo $filesize
+filepath=${line#*:}
+echo $filepath
+if [[ ! -e "$dest_dir/$cnt.pdf" ]];
+then
+cp "$filepath" "$dest_dir/$cnt.pdf"
+cnt=$(( $cnt + 1 ))
+fi
+done < sorted.txt
+rm -rf sorted.txt
+
+....................................................................................
+....................................................................................
+
+....................................................................................
+....................................................................................
+
+
+
+
+fact() {
+    if [[ $1 -eq 0 ]]; then
+        echo 1
+        return
+    fi
+    last=$(fact $(($1 - 1)))
+    echo $(($1 * $last))
+}
+fact 5
+
+....................................................................................
+....................................................................................
+
+fibonacci() {
+    if [[ $1 -le 1 ]]; then
+        echo $1
+    else
+        a=$(fibonacci $(($1 - 1)))
+        b=$(fibonacci $(($1 - 2)))
+        echo $(($a + $b))
+    fi
+}
+fibonacci 7
+....................................................................................
+....................................................................................
+
+
+
+I/O redirections
+ls /nonexistent &> out.txt
+ls /nonexistent > out.txt 2>&1
+
+....................................................................................
+....................................................................................
+
+
+
+[[ $# -ne 1 ]] && exit 1
+pat=$1
+# while read line; do
+while read line;
+do
+    if echo "$line" | grep -q "$1"; then
+        echo "$line"
+    fi
+    if grep -q "cin" <(echo "$line"); then
+        echo "$line"
+    fi
+done
+
+....................................................................................
+....................................................................................
+
+
+
+cut -d: -f1 out.txt 
+find * -type f -exec tar -rvf backup.tar {} \;
+find . -type f -name "*.sh" | wc -l
+find . -type f -name "*.txt" | xargs rm
+
+....................................................................................
+....................................................................................
+
+....................................................................................
+....................................................................................
+....................................................................................
+....................................................................................
+....................................................................................
+....................................................................................
+
+files=("project_1.java" "project_1.js" "project_1.html" "project_1.css")
+
+
+for file in ${files[@]};
+do
+touch $file
+done 
+
+mkdir -p web_project
+subdir=("backend" "frontend" "styles")
+
+for i in ${subdir[@]};
+do
+  mkdir -p "web_project/$i"
+done
+
+for file in $(ls);
+do
+extns="${file##*.}"  
+case $extns in
+java)
+mv $file "web_project/backend"
+;;
+js)
+mv $file "web_project/frontend"
+;;
+html)
+mv $file "web_project/frontend"
+;;
+css)
+mv $file "web_project/styles"
+;;
+esac
+done 
+
+....................................................................................
+....................................................................................
+
+
+files=("old_report.docx" "draft.docx" "old_photo.png" "snapshot.png")
+
+for i in ${files[@]};
+do
+touch $i
+done
+
+mv "draft.docx" "final_report.docx"
+mkdir -p documents
+mkdir -p images
+for file in *;
+do
+extns=${file##*.}
+case $extns in
+docx)
+mv $file documents
+;;
+png)
+mv $file images
+;;
+esac
+done
+
+....................................................................................
+....................................................................................
+online a→1
+
+#!/bin/bash
+mediadir=$1
+normalize_key() {
+    local input="$1"
+    input="${input,,}"         # Convert to lowercase
+    input="${input// /}"       # Remove all spaces (or use _ instead)
+    input="${input##*( )}"     # Trim leading spaces
+    input="${input%%*( )}"     # Trim trailing spaces
+    echo "$input"
+}
+
+
+
+declare -A titles
+declare -A a
+for file in "$mediadir"*;
+do
+filename="${file##*/}"
+
+if [[ "$filename" =~ .- ]];
+then
+first_part="${filename%%-' '*}"
+second_part="${filename##*-' '}"
+second_part="${second_part%.*}" 
+
+if [[ "$first_part" =~ \(.*\) ]]; then
+    t="${first_part%(*}"
+    second_part1="$second_part"
+    second_part=$(normalize_key "$second_part")
+    a["$second_part"]="$second_part1"
+    titles["$second_part"]+="$t,"
+
+
+else
+    first_part1="$first_part"
+    first_part=$(normalize_key "$first_part")
+    a["$first_part"]="$first_part1"
+    titles["$first_part"]+="$second_part,"   
+
+fi
+
+else
+first_part="Unknown"
+second_part="Unknown"
+
+fi
+done
+
+echo "============================================================================"
+> a.txt
+
+for artist in $(printf "%s\n" "${!titles[@]}" | sort); do
+    titl="${titles[$artist]%,}"
+    art="${a[$artist]}"
+    echo "$art: $titl"
+    echo "$art" >> a.txt
+    words=$(echo "$titl" | tr ',' '\n' | sort)
+    while IFS= read -r w; do
+        [[ -z "$w" ]] && continue
+        echo "    $w" >> a.txt
+    done <<< "$words"
+done
+.......................................................................
+.......................................................................
+b1 online
+#!/bin/bash
+
+cntm=0
+cnta=0
+cnte=0
+
+mkdir -p "ok/morning"
+mkdir -p "ok/afternoon"
+mkdir -p "ok/evening"
+for files in "photos_input/"*.jpg;
+do
+
+filename1="${files##*/}"
+filename="${filename1%.jpg}"
+t="${filename: (-6) : 6}"
+x="${t: (0) : 2}"
+echo $x
+case $x in
+0[0-9]|1[0-1])
+if [[ -f "$files" ]];
+then
+mv "$files" "ok/morning/morning_$filename1"
+cntm=$(( $cntm + 1))
+fi
+;;
+
+1[2-7])
+if [[ -f "$files" ]];
+then
+mv "$files" "ok/afternoon/afternoon_$filename1"
+cnta=$(( $cnta + 1))
+fi
+;;
+1[8-9]|2[0-3])
+if [[ -f "$files" ]];
+then
+mv "$files" "ok/evening/evening_$filename1"
+cnte=$(( $cnte + 1))
+fi
+;;
+esac
+done
+
+> "ok/a.txt"
+
+echo "morning $cntm " >> "ok/a.txt"
+echo "afternoon $cnta " >> "ok/a.txt"
+echo "evening $cnte " >> "ok/a.txt"
+
+............................................................................................
+17 batch a→1
+mkdir -p "output"
+while read -r line;
+do
+mapfile -t a < <(find "classified_01" -type f)
+for files in "${a[@]}";
+do
+
+cnt=$( grep -c -iw "$line" "$files")
+if [[ $cnt -gt 0 ]];
+then
+mkdir -p "output/$line"
+cp "$files" "output/$line/${files##*/}"
+fi 
+done
+
+done < keywords.txt
+...................................................................................................
+.............................................................................................................
+declare -A places
+while read -r line ;
+do
+echo $line
+places["$line"]=0
+done < "places.txt"
+
+while read -r line ;
+do
+echo "$line"
+    words=$(echo "$line" | tr ',' '\n')
+    while IFS= read -r w; do
+        [[ -z "$w" ]] && continue
+        cnt=$(grep -c -iw "$w" "places.txt")
+        if [[ $cnt -gt 0 ]];
+        then
+        places["$w"]=$(( "${places["$w"]}" + 1 ))
+        fi
+    done <<< "$words"
+done < "visited.csv"
+>a.txt
+minkey=10000
+minval=""
+for key in "${!places[@]}";
+do
+echo "$key  ${places["$key"]}" >> a.txt
+if [[ $minkey -gt ${places["$key"]} ]];
+then
+minkey=${places["$key"]}
+minval="$key"
+fi
+done
+
+echo "$minval"
+.....................................................................................................................................
+......................................................................................................................................
+csv_line="Stdent ID"
+while read -r line;
+do
+csv_line+=",$line"
+done < "course.txt"
+
+csv_line+="Total Marks,"
+csv_line+="Average Marks,"
+csv_line+="Grade"
+echo "$csv_line">"a.csv"
+
+declare -A arr
+
+while read -r crs;
+do
+sort $crs.txt -o "$crs"_copy.txt
+while read -r line;
+do
+# echo "$line"
+roll="${line%%' '*}"
+arr[$roll]=0
+done < "$crs"_copy.txt 
+
+done < "course.txt"
+
+
+
+while read -r crs;
+do
+while read -r line;
+do
+# echo "$line"
+roll="${line%%' '*}"
+# echo $roll
+mark="${line##*' '}"
+# echo $mark
+arr[$roll]=$(( $mark + ${arr[$roll]} ))
+done < "$crs"_copy.txt
+done < "course.txt"
+
+
+
+for key in $(printf "%s\n" "${!arr[@]}" | sort);
+do
+
+avg=$(( ${arr[$key]} / 3 ))
+grd=""
+case $avg in
+8[0-9]|9[0-9]|100)
+grd="A"
+;;
+6[0-9]|7[0-9])
+grd="B"
+;;
+4[0-9]|5[0-9])
+grd="C"
+;;
+*)
+grd="F"
+;;
+esac
+
+csv_line="$key,"
+while read -r crs;
+do
+line=$(grep "$key" "$crs"_copy.txt)
+mark="${line##*' '}"
+csv_line+="$mark,"
+done < "course.txt"
+csv_line+="${arr[$key]},"
+csv_line+="$avg,"
+csv_line+="$grd"
+echo "$csv_line" >> "a.csv"
+echo "$csv_line"
+done
+
+
+
