@@ -27,17 +27,6 @@ answers - Path to answer folder
 -nocc - Skip comment count analysis
 -nofc - Skip function count analysis
 
-## File Structure
-targets/
-├── C/
-│   └── <student_id>/
-│       ├── main.c
-│       ├── main.out
-│       └── out*.txt
-├── C++/
-├── Python/
-├── Java/
-└── result.csv
 
 ## Supported Languages
 
